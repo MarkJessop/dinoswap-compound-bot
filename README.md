@@ -33,4 +33,5 @@ Please be very careful with your private key and never push it to a public repos
 
 # DINOSWAP Smart Contracts on Polygon
 - `DINO/USDC Farm - 0x1948abc5400aa1d72223882958da3bec643fb4e5`
+- `DINO/USDC Farm V2 - 0xC419c78039Dc2E35e639cB0aB1aC7351A4A9AA44`
 - `DINO Jurassic Pool - 0x52e7b0c6fb33d3d404b07006b006c8a8d6049c55`

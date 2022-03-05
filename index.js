@@ -12,30 +12,32 @@ const UST_POOL_ABI = [{"inputs":[{"internalType":"contract IERC20","name":"_DINO
 const SFI_POOL_ABI = [{"inputs":[{"internalType":"contract IERC20","name":"_DINO","type":"address"},{"internalType":"contract IERC20","name":"_REWARD","type":"address"},{"internalType":"uint256","name":"_rewardPerBlock","type":"uint256"},{"internalType":"uint256","name":"_startBlock","type":"uint256"},{"internalType":"uint256","name":"_endBlock","type":"uint256"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Deposit","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"EmergencyWithdraw","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"user","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"Withdraw","type":"event"},{"inputs":[],"name":"DINO","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"REWARD","outputs":[{"internalType":"contract IERC20","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"deposit","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_to","type":"address"}],"name":"emergencyTransfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"emergencyWithdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"endBlock","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_user","type":"address"}],"name":"pendingReward","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"poolInfo","outputs":[{"internalType":"uint256","name":"lastRewardBlock","type":"uint256"},{"internalType":"uint256","name":"accRewardPerShare","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"rewardPerBlock","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_rewardPerBLock","type":"uint256"}],"name":"setDinoPerBlock","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_endBlock","type":"uint256"}],"name":"setEndBlock","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"stakedDinos","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"startBlock","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"updatePool","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"userInfo","outputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"rewardDebt","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"}]
 
 //SMART CONTRACT ADDRESSSES
+//const DINO_FARM_CONTRACT="0x1948abc5400aa1d72223882958da3bec643fb4e5"
 const DINO_FARM_CONTRACT="0x1948abc5400aa1d72223882958da3bec643fb4e5"
-const DINO_POOL_CONTRACT="0x52e7b0c6fb33d3d404b07006b006c8a8d6049c55"
+const DINO_POOL_CONTRACT="0x52e7b0C6fB33D3d404b07006b006c8A8D6049C55"
 const UST_POOL_CONTRACT="0x80F23e90f8D7d6f5e3f602B1E26C7b5Fa4E530d3"
 const SFI_POOL_CONTRACT="0x990Fd37852b6123B376bCe814BC08192148ef9Aa"
 
 //smart contract objects
 const dinoFarmContract = new web3.eth.Contract(DINO_FARM_ABI, DINO_FARM_CONTRACT)
 const dinoPoolContract = new web3.eth.Contract(DINO_POOL_ABI, DINO_POOL_CONTRACT)
-const sfiPoolContract = new web3.eth.Contract(SFI_POOL_ABI, SFI_POOL_CONTRACT)
+// const sfiPoolContract = new web3.eth.Contract(SFI_POOL_ABI, SFI_POOL_CONTRACT)
 
-const farmID = 10
+const farmID = 27
 
 let currently_compounding = false
 
 async function checkCompoundingOpportunities(){
+    console.log(`${(new Date).toString()} - Checking Compounding oportunities`)
     if(currently_compounding) return
     try{
-        const pendingDino = await dinoFarmContract.methods.pendingDino(farmID, wallet.address).call()
+        const pendingDino = (await dinoFarmContract.methods.pendingDino(farmID, wallet.address).call())
         const gasLimit = 200000
         const gasPrice = await web3.eth.getGasPrice()
         const txCost = web3.utils.fromWei(gasPrice.toString(),'ether') * gasLimit
         
         //if the dino to be excavated is more than the transaction cost (assumes 1 DINO>1 MATIC)
-        if(pendingDino > 4 * txCost) {
+        if(pendingDino*0.000000000000000001 > 10 * txCost) {
             console.log(`time to compound ${web3.utils.fromWei(pendingDino.toString(),'ether')} DINO!`)
             currently_compounding = true
             console.log(`gas Price: ${gasPrice}`)
@@ -90,7 +92,9 @@ async function compound(pendingDino, poolContract, gasPrice, gasLimit){
 }
 
 
-checkCompoundingOpportunities()
-const POLLING_INTERVAL = 240000 // 4 minutes 
+// checkCompoundingOpportunities()
+const ONE_MINUTE = 6000
+const POLLING_INTERVAL = ONE_MINUTE * 60 // 60 minutes
+console.log(`${(new Date).toString()} - Polling every %d minutes`, POLLING_INTERVAL / ONE_MINUTE)
 setInterval(async () => { await checkCompoundingOpportunities() }, POLLING_INTERVAL)
 
